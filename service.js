@@ -1,4 +1,6 @@
-// import { doc, getDocs, collection } from "firebase/firestore";
-// import { db } from "./firebase";
+import { doc, getDocs, collection } from "firebase/firestore";
+import { db } from "./firebase";
 
-// const querySnapshot = getDocs(collection(db, "users"));
+const querySnapshot = getDocs(collection(db, "restaurant"));
+
+export {querySnapshot};

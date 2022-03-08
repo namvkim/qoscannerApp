@@ -1,4 +1,5 @@
 import myColor from "../color";
+import { querySnapshot} from '../service';
 import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
@@ -54,6 +55,7 @@ export default function Home() {
     ],
   };
 
+  console.log(querySnapshot);
   useEffect(() => {}, []);
 
   const RenderItem = () => {
