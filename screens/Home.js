@@ -1,6 +1,4 @@
 import myColor from "../color";
-import { citiesRef } from "../service";
-console.log(citiesRef);
 import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
@@ -22,7 +20,11 @@ import {
 import { Link } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
+import { getAllProduct } from "../service";
+
 export default function Home() {
+  const [products, setProducts] = useState();
+
   const data = [
     { id: 1 },
     { id: 2 },
@@ -56,7 +58,11 @@ export default function Home() {
     ],
   };
 
-  useEffect(() => {}, []);
+  // console.log(products);
+
+  // useEffect(() => {
+  //   getAllProduct(setProducts);
+  // }, []);
 
   const RenderItem = () => {
     return (
