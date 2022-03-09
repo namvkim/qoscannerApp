@@ -3,8 +3,14 @@ import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
+import {
+  Entypo,
+  MaterialIcons,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 
+import Scan from "./screens/Scan";
 import Home from "./screens/Home";
 import Message from "./screens/Message";
 import Setting from "./screens/Setting";
@@ -19,16 +25,26 @@ const MyTabs = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Scan"
       activeColor={myColor.orange}
       inactiveColor={myColor.greyTxt}
       barStyle={{ backgroundColor: myColor.white }}
     >
       <Tab.Screen
+        name="Scan"
+        component={Scan}
+        options={{
+          tabBarLabel: "Quét mã",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="md-qr-code" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Home"
         component={Home}
         options={{
-          tabBarLabel: "Home",
+          tabBarLabel: "Trang chủ",
           tabBarIcon: ({ color }) => (
             <Entypo name="home" size={24} color={color} />
           ),
@@ -38,7 +54,7 @@ const MyTabs = () => {
         name="Message"
         component={Message}
         options={{
-          tabBarLabel: "Message",
+          tabBarLabel: "Tin nhắn",
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="message" size={24} color={color} />
           ),
@@ -48,7 +64,7 @@ const MyTabs = () => {
         name="Settings"
         component={Setting}
         options={{
-          tabBarLabel: "Settings",
+          tabBarLabel: "Cài đặt",
           tabBarIcon: ({ color }) => (
             <Ionicons name="settings" size={24} color={color} />
           ),
