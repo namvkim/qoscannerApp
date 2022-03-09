@@ -1,5 +1,5 @@
 import myColor from "../color";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -21,19 +21,13 @@ import { Link } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { getAllProduct } from "../service";
+import { DataContext } from "../context";
 
 export default function Home() {
   const [products, setProducts] = useState();
+  const dataContext = useContext(DataContext);
+  const type = [{ id: 1 }];
 
-  const data = [
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-    { id: 6 },
-  ];
-  const type = [{ id: 1 }, { id: 2 }, { id: 3 }];
   const scrollY = useRef(new Animated.Value(0)).current;
   const opacityMenu = scrollY.interpolate({
     inputRange: [0, 70],
@@ -58,24 +52,26 @@ export default function Home() {
     ],
   };
 
-  // console.log(products);
+  useEffect(() => {
+    getAllProduct("JfxhZ1Tdn8q0JLZm1JvL", setProducts);
+    // if (dataContext.data) {
+    //   getAllProduct(dataContext.data.idRestaurant, setProducts);
+    // }
+  }, []);
+  console.log(dataContext.data);
 
-  // useEffect(() => {
-  //   getAllProduct(setProducts);
-  // }, []);
-
-  const RenderItem = () => {
+  const RenderItem = ({ item }) => {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemContent}>
-          <Text style={styles.itemTitle}>Gà hầm hạt sen - bbq fadsfs</Text>
-          <Text style={styles.itemSub}>sup gà</Text>
-          <Text style={styles.itemPrice}>50.000đ</Text>
+          <Text style={styles.itemTitle}>{item.name}</Text>
+          <Text style={styles.itemSub}>{item.description}</Text>
+          <Text style={styles.itemPrice}>{item.price}</Text>
         </View>
         <Image
           style={styles.itemImg}
           source={{
-            uri: "https://images.squarespace-cdn.com/content/v1/53883795e4b016c956b8d243/1551438228969-H0FPV1FO3W5B0QL328AS/chup-anh-thuc-an-1.jpg",
+            uri: item.image,
           }}
         />
       </View>
@@ -91,7 +87,7 @@ export default function Home() {
       <View style={styles.blockContainer}>
         <Text style={styles.blockTitle}>Điểm tâm</Text>
         <FlatList
-          data={data}
+          data={products}
           renderItem={RenderItem}
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={ItemDivider}

@@ -16,7 +16,7 @@ import Message from "./screens/Message";
 import Setting from "./screens/Setting";
 import Empty from "./screens/Empty";
 
-import DataContext from "./context";
+import ContextProvider from "./context";
 
 const MyTabs = () => {
   const Tab = createMaterialBottomTabNavigator();
@@ -25,7 +25,7 @@ const MyTabs = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Scan"
+      initialRouteName="Home"
       activeColor={myColor.orange}
       inactiveColor={myColor.greyTxt}
       barStyle={{ backgroundColor: myColor.white }}
@@ -95,10 +95,10 @@ const MyStack = () => {
 
 export default function App() {
   return (
-    <DataContext.Provider value={""}>
+    <ContextProvider value="bb">
       <NavigationContainer>
         <MyStack />
       </NavigationContainer>
-    </DataContext.Provider>
+    </ContextProvider>
   );
 }
