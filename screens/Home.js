@@ -11,6 +11,7 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import {
   FontAwesome,
   SimpleLineIcons,
@@ -33,6 +34,7 @@ export default function Home() {
   const [category, setCategory] = useState();
   const [products, setProducts] = useState();
   const dataContext = useContext(DataContext);
+  const navigation = useNavigation();
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const opacityMenu = scrollY.interpolate({
@@ -58,24 +60,30 @@ export default function Home() {
     ],
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     if (dataContext.data) {
       getAllProduct(dataContext.data.idRestaurant, setProducts);
-
-      const res = await getOneRestaurant(dataContext.data.idRestaurant);
-      setRestaurant(res);
-      const cate = await getAllCategory(dataContext.data.idRestaurant);
-      setCategory(cate);
+      getOneRestaurant(dataContext.data.idRestaurant, setRestaurant);
+      getAllCategory(dataContext.data.idRestaurant, setCategory);
     }
   }, [dataContext.data]);
 
+  const navigateDetails = (item) => {
+    navigation.navigate("Details", item);
+  };
+
   const RenderItem = ({ item }) => {
     return (
-      <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.itemContainer}
+        onPress={() => navigateDetails(item)}
+      >
         <View style={styles.itemContent}>
           <Text style={styles.itemTitle}>{item.name}</Text>
           <Text style={styles.itemSub}>{item.description}</Text>
-          <Text style={styles.itemPrice}>{item.price}</Text>
+          <Text style={styles.itemPrice}>
+            {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+          </Text>
         </View>
         <Image
           style={styles.itemImg}
@@ -83,7 +91,7 @@ export default function Home() {
             uri: item.image,
           }}
         />
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -92,18 +100,19 @@ export default function Home() {
   };
 
   const RenderBlock = ({ item }) => {
-    const data = products.filter((product) => product.category === item.id);
-    console.log("data", data);
+    var data = products.filter((product) => product.category === item.id);
     return (
-      <View style={styles.blockContainer}>
-        <Text style={styles.blockTitle}>{item.name}</Text>
-        <FlatList
-          data={data}
-          renderItem={RenderItem}
-          keyExtractor={(item) => item.id}
-          ItemSeparatorComponent={ItemDivider}
-        />
-      </View>
+      data.length != 0 && (
+        <View style={styles.blockContainer}>
+          <Text style={styles.blockTitle}>{item.name}</Text>
+          <FlatList
+            data={data}
+            renderItem={RenderItem}
+            keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={ItemDivider}
+          />
+        </View>
+      )
     );
   };
 
@@ -146,7 +155,6 @@ export default function Home() {
       </View>
     );
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
@@ -245,8 +253,8 @@ export default function Home() {
           { useNativeDriver: true }
         )}
       />
-      {/* {true && <Loading />} */}
-      {/* {true && <Empty />} */}
+      {(!restaurant || !category || !products) && <Loading />}
+      {!dataContext.data && <Empty />}
     </SafeAreaView>
   );
 }
@@ -307,7 +315,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
+    height: "100%",
     zIndex: -1,
   },
   headerBox: {
@@ -385,13 +393,14 @@ const styles = StyleSheet.create({
   },
   blockTitle: {
     fontSize: 18,
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     fontWeight: "bold",
   },
   itemContainer: {
     flexDirection: "row",
     paddingVertical: 14,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
   },
   itemImg: {
     height: 80,

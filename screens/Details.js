@@ -1,5 +1,5 @@
-import Color from "../color";
-import React from "react";
+import myColor from "../color";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -10,49 +10,69 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Details() {
+export default function Details(props) {
+  const product = props.route.params;
+  const navigation = useNavigation();
+  const [quantity, setQuantity] = useState(1);
+  const total = quantity * product.price.toString();
+
+  const onSubmit = () => {
+    console.log("submit");
+
+    // navigation.navigate("Home");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <Image
-        style={styles.image}
-        source={{
-          uri: "https://images.squarespace-cdn.com/content/v1/53883795e4b016c956b8d243/1551438228969-H0FPV1FO3W5B0QL328AS/chup-anh-thuc-an-1.jpg",
-        }}
-      />
-      <TouchableOpacity style={styles.btnCloseBox}>
-        <MaterialIcons name="close" size={24} color={Color.white} />
+      <Image style={styles.image} source={{ uri: product.image }} />
+      <TouchableOpacity
+        style={styles.btnCloseBox}
+        onPress={() => navigation.navigate("Home")}
+      >
+        <MaterialIcons name="close" size={24} color={myColor.white} />
       </TouchableOpacity>
       <View style={styles.content}>
         <View style={styles.nameBox}>
-          <Text style={styles.name}>Details screen</Text>
-          <Text style={styles.price}>Details screen</Text>
+          <Text style={styles.name}>{product.name}</Text>
+          <Text style={styles.price}>
+            {product.price.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+          </Text>
         </View>
-        <Text style={styles.description}>Details screen</Text>
+        <Text style={styles.description}>{product.description}</Text>
         <View style={styles.quantityGroup}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setQuantity(quantity - 1)}
+            disabled={quantity <= 1}
+          >
             <Feather
               name="minus-circle"
               size={42}
-              color={true ? Color.greyTxt : Color.orange}
+              color={quantity === 1 ? myColor.greyTxt : myColor.orange}
               style={styles.btnQuantity}
             />
           </TouchableOpacity>
-          <Text style={styles.quantity}>1</Text>
-          <TouchableOpacity>
+          <Text style={styles.quantity}>{quantity}</Text>
+          <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
             <Feather
               name="plus-circle"
               size={42}
-              color={Color.orange}
+              color={myColor.orange}
               style={styles.btnQuantity}
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={[styles.btnSubmit, styles.btnShadow]}>
-          <Text style={styles.btnSubmitTxt}>1 Món</Text>
+        <TouchableOpacity
+          style={[styles.btnSubmit, styles.btnShadow]}
+          onPress={() => onSubmit()}
+        >
+          <Text style={styles.btnSubmitTxt}>{quantity} Món</Text>
           <Text style={styles.btnSubmitTxt}>Thêm</Text>
-          <Text style={styles.btnSubmitTxt}>25.000đ</Text>
+          <Text style={styles.btnSubmitTxt}>
+            {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -65,13 +85,13 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 230,
   },
   btnCloseBox: {
     backgroundColor: "rgba(0,0,0,0.2)",
     borderRadius: 20,
     position: "absolute",
-    top: 16,
+    top: 8,
     left: 16,
   },
   content: {
@@ -95,7 +115,7 @@ const styles = StyleSheet.create({
   },
   description: {
     width: "100%",
-    color: Color.greyTxt,
+    color: myColor.greyTxt,
   },
   quantityGroup: {
     flexDirection: "row",
@@ -120,12 +140,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: Color.orange,
+    backgroundColor: myColor.orange,
   },
   btnSubmitTxt: {
     fontSize: 16,
     fontWeight: "bold",
-    color: Color.white,
+    color: myColor.white,
   },
   btnShadow: {
     shadowColor: "#000",

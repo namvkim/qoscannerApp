@@ -3,4 +3,5 @@ export default myColor = {
   white: "#fff",
   greyTxt: "#576574",
   greyBg: "#ecf0f1",
+  black: "#000000",
 };
