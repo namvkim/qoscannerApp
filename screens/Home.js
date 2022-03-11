@@ -17,16 +17,22 @@ import {
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+
+import Loading from "../components/Loading";
+import Empty from "../components/Empty";
+
 import { Link } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { getAllProduct } from "../service";
+import { getOneRestaurant, getAllCategory, getAllProduct } from "../service";
 import { DataContext } from "../context";
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+  const [restaurant, setRestaurant] = useState();
+  const [category, setCategory] = useState();
   const [products, setProducts] = useState();
   const dataContext = useContext(DataContext);
-  const type = [{ id: 1 }];
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const opacityMenu = scrollY.interpolate({
@@ -52,13 +58,16 @@ export default function Home() {
     ],
   };
 
-  useEffect(() => {
-    getAllProduct("JfxhZ1Tdn8q0JLZm1JvL", setProducts);
-    // if (dataContext.data) {
-    //   getAllProduct(dataContext.data.idRestaurant, setProducts);
-    // }
-  }, []);
-  console.log(dataContext.data);
+  useEffect(async () => {
+    if (dataContext.data) {
+      getAllProduct(dataContext.data.idRestaurant, setProducts);
+
+      const res = await getOneRestaurant(dataContext.data.idRestaurant);
+      setRestaurant(res);
+      const cate = await getAllCategory(dataContext.data.idRestaurant);
+      setCategory(cate);
+    }
+  }, [dataContext.data]);
 
   const RenderItem = ({ item }) => {
     return (
@@ -82,12 +91,14 @@ export default function Home() {
     return <View style={styles.itemDivider} />;
   };
 
-  const RenderBlock = () => {
+  const RenderBlock = ({ item }) => {
+    const data = products.filter((product) => product.category === item.id);
+    console.log("data", data);
     return (
       <View style={styles.blockContainer}>
-        <Text style={styles.blockTitle}>Điểm tâm</Text>
+        <Text style={styles.blockTitle}>{item.name}</Text>
         <FlatList
-          data={products}
+          data={data}
           renderItem={RenderItem}
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={ItemDivider}
@@ -109,10 +120,8 @@ export default function Home() {
             source={require("../assets/logo.png")}
           />
           <Text style={styles.headerSub}>Đối tác của QO Scanner</Text>
-          <Text style={styles.headerTitle}>SUNNY’S BBQ</Text>
-          <Text style={styles.headerAddress}>
-            101B - Lê Hữu Trác - Sơn Trà - Đà Nẵng
-          </Text>
+          <Text style={styles.headerTitle}>{restaurant?.name}</Text>
+          <Text style={styles.headerAddress}>{restaurant?.address}</Text>
         </View>
         <View style={styles.headerQuantity}>
           <FontAwesome
@@ -129,7 +138,9 @@ export default function Home() {
             style={styles.headerBag}
           />
           <Text style={styles.headerQuantityText}> 999+</Text>
-          <Text style={styles.tableName}>Tên bàn: 32</Text>
+          <Text style={styles.tableName}>
+            Tên bàn: {dataContext?.data?.table}
+          </Text>
         </View>
         <BlockDivider />
       </View>
@@ -146,9 +157,7 @@ export default function Home() {
       >
         <Animated.Image
           style={[styles.image, { opacity: opacityImage }]}
-          source={{
-            uri: "https://www.kiotviet.vn/wp-content/uploads/2014/06/bi-quyet-xay-dung-hinh-anh-cua-hang-dien-thoai-moi-e1447237732926.jpg",
-          }}
+          source={{ uri: restaurant?.image }}
         />
       </LinearGradient>
       <View style={[styles.menu, styles.menuPosition]}>
@@ -226,7 +235,7 @@ export default function Home() {
       <Animated.FlatList
         style={styles.content}
         contentContainerStyle={styles.contentStyles}
-        data={type}
+        data={category}
         renderItem={RenderBlock}
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={BlockDivider}
@@ -236,6 +245,8 @@ export default function Home() {
           { useNativeDriver: true }
         )}
       />
+      {/* {true && <Loading />} */}
+      {/* {true && <Empty />} */}
     </SafeAreaView>
   );
 }

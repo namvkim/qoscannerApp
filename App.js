@@ -1,5 +1,6 @@
 import myColor from "./color";
 import { useEffect } from "react";
+import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
@@ -8,15 +9,19 @@ import {
   MaterialIcons,
   Ionicons,
   MaterialCommunityIcons,
+  FontAwesome5,
 } from "@expo/vector-icons";
 
-import Scan from "./screens/Scan";
 import Home from "./screens/Home";
+import Cart from "./screens/Cart";
+import Scan from "./screens/Scan";
 import Message from "./screens/Message";
 import Setting from "./screens/Setting";
-import Empty from "./screens/Empty";
+import Details from "./screens/Details";
 
-import ContextProvider from "./context";
+import { ContextProvider } from "./context";
+
+LogBox.ignoreLogs(["Setting a timer"]);
 
 const MyTabs = () => {
   const Tab = createMaterialBottomTabNavigator();
@@ -31,22 +36,32 @@ const MyTabs = () => {
       barStyle={{ backgroundColor: myColor.white }}
     >
       <Tab.Screen
-        name="Scan"
-        component={Scan}
-        options={{
-          tabBarLabel: "Quét mã",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="md-qr-code" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="Home"
         component={Home}
         options={{
           tabBarLabel: "Trang chủ",
           tabBarIcon: ({ color }) => (
             <Entypo name="home" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Cart"
+        component={Cart}
+        options={{
+          tabBarLabel: "Giỏ hàng",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5 name="shopping-bag" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Scan"
+        component={Scan}
+        options={{
+          tabBarLabel: "Quét mã",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="md-qr-code" size={24} color={color} />
           ),
         }}
       />
@@ -85,8 +100,8 @@ const MyStack = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Empty"
-        component={Empty}
+        name="Details"
+        component={Details}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -95,7 +110,7 @@ const MyStack = () => {
 
 export default function App() {
   return (
-    <ContextProvider value="bb">
+    <ContextProvider>
       <NavigationContainer>
         <MyStack />
       </NavigationContainer>
