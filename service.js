@@ -1,5 +1,6 @@
 import {
   getDoc,
+  addDoc,
   doc,
   query,
   collection,
@@ -32,4 +33,8 @@ export const getAllProduct = (idRes, callback) => {
     });
     callback(documents);
   });
+};
+
+export const postOneOrder = async (idRes, order) => {
+  await addDoc(collection(db, "restaurant", idRes, "order"), order);
 };

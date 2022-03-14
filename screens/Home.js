@@ -26,14 +26,14 @@ import { Link } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { getOneRestaurant, getAllCategory, getAllProduct } from "../service";
-import { DataContext } from "../context";
+import { ResContext } from "../context/ResContext";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [restaurant, setRestaurant] = useState();
   const [category, setCategory] = useState();
   const [products, setProducts] = useState();
-  const dataContext = useContext(DataContext);
+  const resContext = useContext(ResContext);
   const navigation = useNavigation();
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -61,12 +61,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (dataContext.data) {
-      getAllProduct(dataContext.data.idRestaurant, setProducts);
-      getOneRestaurant(dataContext.data.idRestaurant, setRestaurant);
-      getAllCategory(dataContext.data.idRestaurant, setCategory);
+    if (resContext.data) {
+      getAllProduct(resContext.data.idRestaurant, setProducts);
+      getOneRestaurant(resContext.data.idRestaurant, setRestaurant);
+      getAllCategory(resContext.data.idRestaurant, setCategory);
     }
-  }, [dataContext.data]);
+  }, [resContext.data]);
 
   const navigateDetails = (item) => {
     navigation.navigate("Details", item);
@@ -81,9 +81,7 @@ export default function Home() {
         <View style={styles.itemContent}>
           <Text style={styles.itemTitle}>{item.name}</Text>
           <Text style={styles.itemSub}>{item.description}</Text>
-          <Text style={styles.itemPrice}>
-            {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
-          </Text>
+          <Text>{item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ</Text>
         </View>
         <Image
           style={styles.itemImg}
@@ -148,7 +146,7 @@ export default function Home() {
           />
           <Text style={styles.headerQuantityText}> 999+</Text>
           <Text style={styles.tableName}>
-            Tên bàn: {dataContext?.data?.table}
+            Tên bàn: {resContext?.data?.table}
           </Text>
         </View>
         <BlockDivider />
@@ -194,7 +192,7 @@ export default function Home() {
       </View>
       <Animated.View style={[styles.menuScroll, { opacity: opacityMenu }]}>
         <View style={styles.menu}>
-          <TouchableOpacity onPress={() => console.log("arrow-back")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Scan")}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
           <Text style={styles.menuTitle} ellipsizeMode="tail" numberOfLines={1}>
@@ -254,7 +252,7 @@ export default function Home() {
         )}
       />
       {(!restaurant || !category || !products) && <Loading />}
-      {!dataContext.data && <Empty />}
+      {!resContext.data && <Empty />}
     </SafeAreaView>
   );
 }
@@ -420,9 +418,6 @@ const styles = StyleSheet.create({
   itemSub: {
     fontWeight: "500",
     color: myColor.greyTxt,
-  },
-  itemPrice: {
-    // fontSize: 16,
   },
   itemDivider: {
     height: 1,

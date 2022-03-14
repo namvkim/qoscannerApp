@@ -8,7 +8,6 @@ import {
   Entypo,
   MaterialIcons,
   Ionicons,
-  MaterialCommunityIcons,
   FontAwesome5,
 } from "@expo/vector-icons";
 
@@ -18,8 +17,10 @@ import Scan from "./screens/Scan";
 import Message from "./screens/Message";
 import Setting from "./screens/Setting";
 import Details from "./screens/Details";
+import Note from "./screens/Note";
 
-import { ContextProvider } from "./context";
+import { ResContextProvider } from "./context/ResContext";
+import { OrderContextProvider } from "./context/OrderContext";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -104,16 +105,23 @@ const MyStack = () => {
         component={Details}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="Note"
+        component={Note}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
 
 export default function App() {
   return (
-    <ContextProvider>
-      <NavigationContainer>
-        <MyStack />
-      </NavigationContainer>
-    </ContextProvider>
+    <ResContextProvider>
+      <OrderContextProvider>
+        <NavigationContainer>
+          <MyStack />
+        </NavigationContainer>
+      </OrderContextProvider>
+    </ResContextProvider>
   );
 }

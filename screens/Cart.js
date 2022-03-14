@@ -1,5 +1,5 @@
 import myColor from "../color";
-import React from "react";
+import React, { useContext } from "react";
 import {
   Text,
   SafeAreaView,
@@ -9,34 +9,68 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
+import { OrderContext } from "../context/OrderContext";
+import { ResContext } from "../context/ResContext";
+import { postOneOrder } from "../service";
 
 export default function Cart() {
-  const data = [
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    // { id: 5 },
-    // { id: 6 },
-    // { id: 7 },
-    // { id: 8 },
-    // { id: 9 },
-    // { id: 10 },
-    // { id: 11 },
-    // { id: 12 },
-  ];
+  const navigation = useNavigation();
+  const orderContext = useContext(OrderContext);
+  const resContext = useContext(ResContext);
 
-  const RenderItem = () => {
+  const totalPrice = orderContext.data.reduce(
+    (total, currentValue) =>
+      (total = total + currentValue.quantity * currentValue.price),
+    0
+  );
+  const totalProduct = orderContext.data.reduce(
+    (total, currentValue) => (total = total + currentValue.quantity),
+    0
+  );
+
+  const deleteItem = (product) => {
+    const index = orderContext.data.map((e) => e.id).indexOf(product.id);
+    orderContext.data.splice(index, 1);
+    orderContext.setData([...orderContext.data]);
+  };
+
+  const sendOrder = () => {
+    if (orderContext.data.length > 0) {
+      const object = orderContext.data.map((el) => {
+        return {
+          id: el.id,
+          name: el.name,
+          price: el.price,
+          quantity: el.quantity,
+        };
+      });
+      postOneOrder(resContext.data.idRestaurant, {
+        data: object,
+        table: resContext.data.table,
+        status: true,
+      }).then(() => {
+        orderContext.setData([]);
+      });
+    } else {
+      console.log("cart empty");
+    }
+  };
+
+  const RenderItem = ({ item }) => {
+    const itemTotal = item.quantity * item.price;
     return (
       <TouchableOpacity style={styles.itemContainer}>
         <View style={styles.itemGroup}>
-          <Text style={styles.itemQuantity}>1x</Text>
-          <Text style={styles.itemText}>Cháo giò heo</Text>
+          <Text style={styles.itemQuantity}>{item.quantity}x</Text>
+          <Text style={styles.itemText}>{item.name}</Text>
         </View>
         <View style={styles.itemGroup}>
-          <Text style={styles.itemText}>20000đ</Text>
-          <TouchableOpacity>
+          <Text>
+            {itemTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+          </Text>
+          <TouchableOpacity onPress={() => deleteItem(item)}>
             <AntDesign
               style={styles.itemIcon}
               name="closecircle"
@@ -57,7 +91,10 @@ export default function Cart() {
     return (
       <View style={styles.blockBox}>
         <ItemDivider />
-        <TouchableOpacity style={styles.blockMess}>
+        <TouchableOpacity
+          style={styles.blockMess}
+          onPress={() => navigation.navigate("Note")}
+        >
           <Feather name="file-text" size={18} color={myColor.greyTxt} />
           <Text style={styles.blockText}>
             Bạn có muốn nhắn gì tới nhà hàng không ?
@@ -65,8 +102,13 @@ export default function Cart() {
         </TouchableOpacity>
         <ItemDivider />
         <View style={styles.blockTotal}>
-          <Text>Tạm tính (2 món)</Text>
-          <Text>195000đ</Text>
+          <Text>
+            Tạm tính (
+            {totalProduct.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} món)
+          </Text>
+          <Text>
+            {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+          </Text>
         </View>
       </View>
     );
@@ -78,14 +120,16 @@ export default function Cart() {
         <View style={styles.footerContent}>
           <View style={styles.footerTotal}>
             <Text style={styles.footerTitle}>Tổng cộng</Text>
-            <Text style={styles.footerValue}>223000đ</Text>
+            <Text style={styles.footerValue}>
+              {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+            </Text>
           </View>
           <FooterDivider />
           <TouchableOpacity style={styles.footerTxtBox}>
             <Text style={styles.footerTxt}>Thêm mã giảm giá</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.footerBtn}>
+        <TouchableOpacity style={styles.footerBtn} onPress={() => sendOrder()}>
           <Text style={styles.footerBtnTxt}>Đặt hàng</Text>
         </TouchableOpacity>
       </View>
@@ -99,12 +143,15 @@ export default function Cart() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <Text style={styles.header}>Trang thanh toán</Text>
-      <TouchableOpacity style={styles.iconBack}>
+      <Text style={styles.header}>Trang giỏ hàng</Text>
+      <TouchableOpacity
+        style={styles.iconBack}
+        onPress={() => navigation.navigate("Home")}
+      >
         <Ionicons name="arrow-back" size={24} color={myColor.black} />
       </TouchableOpacity>
       <FlatList
-        data={data}
+        data={orderContext.data}
         renderItem={RenderItem}
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={ItemDivider}

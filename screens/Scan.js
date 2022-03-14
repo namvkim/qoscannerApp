@@ -9,12 +9,12 @@ import {
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 
-import { DataContext } from "../context";
+import { ResContext } from "../context/ResContext";
 
 export default function Scan() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const dataContext = useContext(DataContext);
+  const resContext = useContext(ResContext);
 
   useEffect(() => {
     (async () => {
@@ -27,7 +27,7 @@ export default function Scan() {
     setScanned(true);
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     const arr = data.split("/");
-    dataContext.setData({ idRestaurant: arr[0], table: arr[1] });
+    resContext.setData({ idRestaurant: arr[0], table: arr[1] });
   };
 
   if (hasPermission === null) {

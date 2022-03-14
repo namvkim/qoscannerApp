@@ -1,5 +1,5 @@
 import myColor from "../color";
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Text,
   View,
@@ -11,17 +11,28 @@ import {
 } from "react-native";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { OrderContext } from "../context/OrderContext";
 
 export default function Details(props) {
   const product = props.route.params;
   const navigation = useNavigation();
+  const orderContext = useContext(OrderContext);
+
   const [quantity, setQuantity] = useState(1);
   const total = quantity * product.price.toString();
 
-  const onSubmit = () => {
-    console.log("submit");
-
-    // navigation.navigate("Home");
+  const onSubmit = async () => {
+    const index = orderContext.data.map((e) => e.id).indexOf(product.id);
+    if (index === -1) {
+      orderContext.setData([
+        ...orderContext.data,
+        { ...product, quantity: quantity },
+      ]);
+    } else {
+      orderContext.data[index].quantity = quantity;
+      orderContext.setData([...orderContext.data]);
+    }
+    navigation.navigate("Home");
   };
 
   return (
@@ -68,9 +79,9 @@ export default function Details(props) {
           style={[styles.btnSubmit, styles.btnShadow]}
           onPress={() => onSubmit()}
         >
-          <Text style={styles.btnSubmitTxt}>{quantity} Món</Text>
+          <Text style={[styles.btnSubmitTxt, { flex: 1 }]}>{quantity} Món</Text>
           <Text style={styles.btnSubmitTxt}>Thêm</Text>
-          <Text style={styles.btnSubmitTxt}>
+          <Text style={[styles.btnSubmitTxt, { flex: 1, textAlign: "right" }]}>
             {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
           </Text>
         </TouchableOpacity>
