@@ -2,7 +2,6 @@ import {
   getDoc,
   addDoc,
   doc,
-  query,
   collection,
   onSnapshot,
   getDocs,
@@ -37,4 +36,8 @@ export const getAllProduct = (idRes, callback) => {
 
 export const postOneOrder = async (idRes, order) => {
   await addDoc(collection(db, "restaurant", idRes, "order"), order);
+};
+
+export const postOneMessage = async (idRes, mess) => {
+  await addDoc(collection(db, "restaurant", idRes, "message"), mess);
 };

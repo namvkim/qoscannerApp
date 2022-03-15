@@ -1,5 +1,5 @@
 import myColor from "../color";
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Text,
   SafeAreaView,
@@ -15,10 +15,21 @@ import { OrderContext } from "../context/OrderContext";
 import { ResContext } from "../context/ResContext";
 import { postOneOrder } from "../service";
 
-export default function Cart() {
+import Empty from "../components/Empty";
+
+export default function Cart(props) {
   const navigation = useNavigation();
   const orderContext = useContext(OrderContext);
   const resContext = useContext(ResContext);
+  const [note, setNote] = useState("");
+
+  const navigateToNote = () => {
+    navigation.navigate("Note", note);
+  };
+
+  useEffect(() => {
+    setNote(props.route.params);
+  }, [props.route.params]);
 
   const totalPrice = orderContext.data.reduce(
     (total, currentValue) =>
@@ -50,8 +61,10 @@ export default function Cart() {
         data: object,
         table: resContext.data.table,
         status: true,
+        note: note ? note : "",
       }).then(() => {
         orderContext.setData([]);
+        setNote("");
       });
     } else {
       console.log("cart empty");
@@ -93,12 +106,16 @@ export default function Cart() {
         <ItemDivider />
         <TouchableOpacity
           style={styles.blockMess}
-          onPress={() => navigation.navigate("Note")}
+          onPress={() => navigateToNote()}
         >
           <Feather name="file-text" size={18} color={myColor.greyTxt} />
-          <Text style={styles.blockText}>
-            Bạn có muốn nhắn gì tới nhà hàng không ?
-          </Text>
+          {note ? (
+            <Text style={{ marginLeft: 8 }}>{note}</Text>
+          ) : (
+            <Text style={styles.blockText}>
+              Bạn có muốn nhắn gì tới nhà hàng không ?
+            </Text>
+          )}
         </TouchableOpacity>
         <ItemDivider />
         <View style={styles.blockTotal}>
@@ -162,6 +179,7 @@ export default function Cart() {
         style={styles.blockContainer}
       />
       <RenderFooter />
+      {!resContext.data && <Empty />}
     </SafeAreaView>
   );
 }

@@ -1,5 +1,6 @@
 "use strict";
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   Text,
   SafeAreaView,
@@ -12,6 +13,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { ResContext } from "../context/ResContext";
 
 export default function Scan() {
+  const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const resContext = useContext(ResContext);
@@ -28,6 +30,7 @@ export default function Scan() {
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     const arr = data.split("/");
     resContext.setData({ idRestaurant: arr[0], table: arr[1] });
+    navigation.navigate("Home");
   };
 
   if (hasPermission === null) {

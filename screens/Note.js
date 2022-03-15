@@ -1,5 +1,5 @@
 import myColor from "../color";
-import React from "react";
+import React, { useState } from "react";
 import {
   Text,
   SafeAreaView,
@@ -11,17 +11,19 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 
-export default function Note() {
+export default function Note(props) {
   const navigation = useNavigation();
+  const [note, setNote] = useState(props.route.params);
+
+  const navigateToCart = () => {
+    navigation.navigate("Cart", note);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
       <Text style={styles.header}>Lưu ý tới nhà hàng</Text>
-      <TouchableOpacity
-        style={styles.close}
-        onPress={() => navigation.navigate("Cart")}
-      >
+      <TouchableOpacity style={styles.close} onPress={() => navigateToCart()}>
         <AntDesign name="close" size={24} color="black" />
       </TouchableOpacity>
       <TextInput
@@ -30,8 +32,10 @@ export default function Note() {
         placeholder="Ví dụ: không hành lá,..."
         multiline
         numberOfLines={5}
+        onChangeText={setNote}
+        value={note}
       />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => navigateToCart()}>
         <Text style={styles.buttonTxt}>Xác nhận</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -62,7 +66,7 @@ const styles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    bottom: 36,
+    bottom: 24,
     width: "100%",
     paddingVertical: 12,
     backgroundColor: myColor.orange,

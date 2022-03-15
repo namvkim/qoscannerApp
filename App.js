@@ -31,7 +31,7 @@ const MyTabs = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Scan"
       activeColor={myColor.orange}
       inactiveColor={myColor.greyTxt}
       barStyle={{ backgroundColor: myColor.white }}
