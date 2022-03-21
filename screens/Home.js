@@ -20,7 +20,6 @@ import {
 } from "@expo/vector-icons";
 
 import Loading from "../components/Loading";
-import Empty from "../components/Empty";
 
 import { Link } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -29,7 +28,6 @@ import { getOneRestaurant, getAllCategory, getAllProduct } from "../service";
 import { ResContext } from "../context/ResContext";
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
   const [restaurant, setRestaurant] = useState();
   const [category, setCategory] = useState();
   const [products, setProducts] = useState();
@@ -252,7 +250,6 @@ export default function Home() {
         )}
       />
       {(!restaurant || !category || !products) && <Loading />}
-      {!resContext.data && <Empty />}
     </SafeAreaView>
   );
 }

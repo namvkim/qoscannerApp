@@ -2,6 +2,7 @@ import myColor from "../color";
 import React, { useState, useContext } from "react";
 import {
   Text,
+  View,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -10,11 +11,9 @@ import {
   FlatList,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { postOneMessage } from "../service";
 import { ResContext } from "../context/ResContext";
-
-import Empty from "../components/Empty";
 
 export default function Message() {
   const navigation = useNavigation();
@@ -70,14 +69,15 @@ export default function Message() {
     );
   };
 
-  return !resContext.data ? (
-    <Empty />
-  ) : (
+  return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
       <Text style={styles.header}>Yêu cầu tới nhà hàng</Text>
-      <TouchableOpacity style={styles.close}>
-        <AntDesign name="close" size={24} color="black" />
+      <TouchableOpacity
+        style={styles.iconBack}
+        onPress={() => navigation.navigate("Home")}
+      >
+        <Ionicons name="arrow-back" size={24} color={myColor.black} />
       </TouchableOpacity>
       <TextInput
         style={styles.textBox}
@@ -94,9 +94,11 @@ export default function Message() {
         style={styles.sjBox}
         numColumns={2}
       />
-      <TouchableOpacity style={styles.button} onPress={() => sendMess()}>
-        <Text style={styles.buttonTxt}>Gửi yêu cầu</Text>
-      </TouchableOpacity>
+      <View style={styles.btnBox}>
+        <TouchableOpacity style={styles.button} onPress={() => sendMess()}>
+          <Text style={styles.buttonTxt}>Gửi yêu cầu</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -104,29 +106,34 @@ export default function Message() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
     alignItems: "center",
-    backgroundColor: myColor.white,
+    backgroundColor: myColor.greyBg,
   },
   header: {
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,
-    marginBottom: 1,
+    backgroundColor: myColor.white,
+    marginBottom: 8,
     paddingVertical: 8,
+    width: "100%",
   },
-  close: {
+  iconBack: {
     position: "absolute",
     top: 8,
     left: 16,
   },
   textBox: {
     width: "100%",
+    paddingHorizontal: 16,
+    backgroundColor: myColor.white,
+  },
+  btnBox: {
+    width: "100%",
+    paddingHorizontal: 16,
+    backgroundColor: myColor.white,
   },
   button: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
     paddingVertical: 12,
     backgroundColor: myColor.orange,
     borderRadius: 4,
@@ -149,6 +156,8 @@ const styles = StyleSheet.create({
   },
   sjBox: {
     width: "100%",
+    paddingHorizontal: 16,
+    backgroundColor: myColor.white,
   },
   sjBtn: {
     borderColor: myColor.orange,

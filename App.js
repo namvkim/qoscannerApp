@@ -4,18 +4,13 @@ import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import {
-  Entypo,
-  MaterialIcons,
-  Ionicons,
-  FontAwesome5,
-} from "@expo/vector-icons";
+import { Entypo, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 
 import Home from "./screens/Home";
 import Cart from "./screens/Cart";
 import Scan from "./screens/Scan";
 import Message from "./screens/Message";
-import Setting from "./screens/Setting";
+import Account from "./screens/Account";
 import Details from "./screens/Details";
 import Note from "./screens/Note";
 
@@ -57,16 +52,6 @@ const MyTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Scan"
-        component={Scan}
-        options={{
-          tabBarLabel: "Quét mã",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="md-qr-code" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="Message"
         component={Message}
         options={{
@@ -77,12 +62,12 @@ const MyTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Settings"
-        component={Setting}
+        name="Account"
+        component={Account}
         options={{
-          tabBarLabel: "Cài đặt",
+          tabBarLabel: "Tài khoản",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="settings" size={24} color={color} />
+            <MaterialIcons name="account-circle" size={24} color={color} />
           ),
         }}
       />
@@ -94,7 +79,12 @@ const MyStack = () => {
   const Stack = createNativeStackNavigator();
 
   return (
-    <Stack.Navigator initialRouteName="MyTabs">
+    <Stack.Navigator initialRouteName="Scan">
+      <Stack.Screen
+        name="Scan"
+        component={Scan}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="MyTabs"
         component={MyTabs}

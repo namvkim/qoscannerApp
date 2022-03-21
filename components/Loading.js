@@ -7,8 +7,8 @@ export default function Loading() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <Image style={styles.logo} source={require("../assets/loading.gif")} />
-      <Text style={styles.text}>Đang tải...</Text>
+      <Image style={styles.logo} source={require("../assets/logo.png")} />
+      <Text style={styles.text}>Đang tải dữ liệu...</Text>
     </SafeAreaView>
   );
 }
@@ -24,8 +24,9 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 24,
+    height: 24,
+    marginBottom: 8,
   },
   text: {
     color: Color.greyTxt,

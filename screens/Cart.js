@@ -15,8 +15,6 @@ import { OrderContext } from "../context/OrderContext";
 import { ResContext } from "../context/ResContext";
 import { postOneOrder } from "../service";
 
-import Empty from "../components/Empty";
-
 export default function Cart(props) {
   const navigation = useNavigation();
   const orderContext = useContext(OrderContext);
@@ -179,7 +177,6 @@ export default function Cart(props) {
         style={styles.blockContainer}
       />
       <RenderFooter />
-      {!resContext.data && <Empty />}
     </SafeAreaView>
   );
 }
@@ -187,11 +184,6 @@ export default function Cart(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  iconBack: {
-    position: "absolute",
-    top: 8,
-    left: 16,
   },
   header: {
     textAlign: "center",
@@ -201,8 +193,13 @@ const styles = StyleSheet.create({
     marginBottom: 1,
     paddingVertical: 8,
   },
+  iconBack: {
+    position: "absolute",
+    top: 8,
+    left: 16,
+  },
   blockContainer: {
-    paddingVertical: 8,
+    paddingTop: 8,
   },
   blockBox: {
     paddingVertical: 18,

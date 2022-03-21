@@ -1,4 +1,5 @@
 "use strict";
+import myColor from "../color";
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -6,9 +7,11 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
-  Button,
+  TouchableOpacity,
 } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import BarcodeMask from "react-native-barcode-mask";
 
 import { ResContext } from "../context/ResContext";
 
@@ -27,10 +30,19 @@ export default function Scan() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     const arr = data.split("/");
     resContext.setData({ idRestaurant: arr[0], table: arr[1] });
-    navigation.navigate("Home");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "MyTabs" }],
+    });
+  };
+
+  const navigateToMyTabs = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "MyTabs" }],
+    });
   };
 
   if (hasPermission === null) {
@@ -45,10 +57,19 @@ export default function Scan() {
       <StatusBar />
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        type={BarCodeScanner.Constants.Type.back}
+        barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
         style={StyleSheet.absoluteFillObject}
       />
-      {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
+      <BarcodeMask edgeColor="#62B1F6" showAnimatedLine />
+      <Text style={styles.title}>Quét mã QR</Text>
+      {resContext.data && (
+        <TouchableOpacity
+          style={styles.btnClose}
+          onPress={() => navigateToMyTabs()}
+        >
+          <AntDesign name="close" size={36} color={myColor.white} />
+        </TouchableOpacity>
       )}
     </SafeAreaView>
   );
@@ -59,5 +80,24 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: myColor.black,
+  },
+  title: {
+    fontSize: 24,
+    color: myColor.white,
+    opacity: 0.5,
+    fontWeight: "bold",
+    width: "100%",
+    textAlign: "center",
+    position: "absolute",
+    top: 40,
+  },
+  btnClose: {
+    position: "absolute",
+    bottom: 40,
+    padding: 12,
+    borderRadius: 100,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
   },
 });
