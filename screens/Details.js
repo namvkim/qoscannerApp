@@ -1,5 +1,5 @@
 import myColor from "../color";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import {
   Text,
   View,
@@ -18,7 +18,7 @@ export default function Details(props) {
   const navigation = useNavigation();
   const orderContext = useContext(OrderContext);
 
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(product.quantity);
   const total = quantity * product.price.toString();
 
   const onSubmit = async () => {
@@ -32,7 +32,7 @@ export default function Details(props) {
       orderContext.data[index].quantity = quantity;
       orderContext.setData([...orderContext.data]);
     }
-    navigation.navigate("Home");
+    navigation.goBack();
   };
 
   return (
@@ -41,7 +41,7 @@ export default function Details(props) {
       <Image style={styles.image} source={{ uri: product.image }} />
       <TouchableOpacity
         style={styles.btnCloseBox}
-        onPress={() => navigation.navigate("Home")}
+        onPress={() => navigation.goBack()}
       >
         <MaterialIcons name="close" size={24} color={myColor.white} />
       </TouchableOpacity>

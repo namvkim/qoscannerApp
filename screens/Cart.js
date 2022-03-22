@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import Loading from "../components/Loading";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
 import { OrderContext } from "../context/OrderContext";
@@ -20,6 +21,7 @@ export default function Cart(props) {
   const orderContext = useContext(OrderContext);
   const resContext = useContext(ResContext);
   const [note, setNote] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigateToNote = () => {
     navigation.navigate("Note", note);
@@ -45,8 +47,13 @@ export default function Cart(props) {
     orderContext.setData([...orderContext.data]);
   };
 
+  const updateItem = (item) => {
+    navigation.navigate("Details", item);
+  };
+
   const sendOrder = () => {
     if (orderContext.data.length > 0) {
+      setLoading(true);
       const object = orderContext.data.map((el) => {
         return {
           id: el.id,
@@ -63,16 +70,25 @@ export default function Cart(props) {
       }).then(() => {
         orderContext.setData([]);
         setNote("");
+        setLoading(false);
+        navigation.navigate("Success", {
+          title: "Gửi đơn hàng thành công !!!",
+        });
       });
     } else {
-      console.log("cart empty");
+      navigation.navigate("Warning", {
+        title: "Vui lòng chọn món !!!",
+      });
     }
   };
 
   const RenderItem = ({ item }) => {
     const itemTotal = item.quantity * item.price;
     return (
-      <TouchableOpacity style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.itemContainer}
+        onPress={() => updateItem(item)}
+      >
         <View style={styles.itemGroup}>
           <Text style={styles.itemQuantity}>{item.quantity}x</Text>
           <Text style={styles.itemText}>{item.name}</Text>
@@ -177,6 +193,7 @@ export default function Cart(props) {
         style={styles.blockContainer}
       />
       <RenderFooter />
+      {loading && <Loading />}
     </SafeAreaView>
   );
 }

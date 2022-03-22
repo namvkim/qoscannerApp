@@ -13,6 +13,9 @@ import Message from "./screens/Message";
 import Account from "./screens/Account";
 import Details from "./screens/Details";
 import Note from "./screens/Note";
+import Success from "./screens/Success";
+import Error from "./screens/Error";
+import Warning from "./screens/Warning";
 
 import { ResContextProvider } from "./context/ResContext";
 import { OrderContextProvider } from "./context/OrderContext";
@@ -98,6 +101,21 @@ const MyStack = () => {
       <Stack.Screen
         name="Note"
         component={Note}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Success"
+        component={Success}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Error"
+        component={Error}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Warning"
+        component={Warning}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

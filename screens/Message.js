@@ -10,6 +10,7 @@ import {
   TextInput,
   FlatList,
 } from "react-native";
+import Loading from "../components/Loading";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { postOneMessage } from "../service";
@@ -19,6 +20,7 @@ export default function Message() {
   const navigation = useNavigation();
   const resContext = useContext(ResContext);
   const [mess, setMess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const data = [
     {
@@ -48,14 +50,22 @@ export default function Message() {
   ];
 
   const sendMess = () => {
-    postOneMessage(resContext.data.idRestaurant, {
-      content: mess,
-      status: true,
-      table: resContext.data.table,
-    }).then(() => {
-      setMess("");
-    });
-    // navigation.navigate("Home");
+    if (mess) {
+      setLoading(true);
+      postOneMessage(resContext.data.idRestaurant, {
+        content: mess,
+        status: true,
+        table: resContext.data.table,
+      }).then(() => {
+        setMess("");
+        setLoading(false);
+        navigation.navigate("Success", { title: "Gửi yêu cầu thành công !!!" });
+      });
+    } else {
+      navigation.navigate("Warning", {
+        title: "Vui lòng nhập yêu cầu !!!",
+      });
+    }
   };
 
   const SubjectBtn = ({ item }) => {
@@ -99,6 +109,7 @@ export default function Message() {
           <Text style={styles.buttonTxt}>Gửi yêu cầu</Text>
         </TouchableOpacity>
       </View>
+      {loading && <Loading />}
     </SafeAreaView>
   );
 }

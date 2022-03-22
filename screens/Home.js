@@ -64,30 +64,53 @@ export default function Home() {
       getOneRestaurant(resContext.data.idRestaurant, setRestaurant);
       getAllCategory(resContext.data.idRestaurant, setCategory);
     }
-  }, [resContext.data]);
+  }, []);
+
+  // useEffect(() => {
+  //   const ac = new AbortController();
+  //   Promise.all([
+  //     getAllProduct(resContext.data.idRestaurant, setProducts),
+  //     getOneRestaurant(resContext.data.idRestaurant, setRestaurant),
+  //     getAllCategory(resContext.data.idRestaurant, setCategory),
+  //   ])
+  //     .then()
+  //     .catch((ex) => console.error(ex));
+  //   return () => ac.abort();
+  // }, []);
 
   const navigateDetails = (item) => {
-    navigation.navigate("Details", item);
+    navigation.navigate("Details", { ...item, quantity: 1 });
   };
 
   const RenderItem = ({ item }) => {
     return (
-      <TouchableOpacity
-        style={styles.itemContainer}
-        onPress={() => navigateDetails(item)}
-      >
-        <View style={styles.itemContent}>
-          <Text style={styles.itemTitle}>{item.name}</Text>
-          <Text style={styles.itemSub}>{item.description}</Text>
-          <Text>{item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ</Text>
-        </View>
-        <Image
-          style={styles.itemImg}
-          source={{
-            uri: item.image,
-          }}
-        />
-      </TouchableOpacity>
+      <View>
+        <TouchableOpacity
+          style={styles.itemContainer}
+          onPress={() => navigateDetails(item)}
+        >
+          <View style={styles.itemContent}>
+            <Text
+              style={styles.itemTitle}
+              ellipsizeMode="tail"
+              numberOfLines={1}
+            >
+              {item.name}
+            </Text>
+            <Text style={styles.itemSub} ellipsizeMode="tail" numberOfLines={2}>
+              {item.description}
+            </Text>
+            <Text>{item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ</Text>
+          </View>
+          <Image
+            style={styles.itemImg}
+            source={{
+              uri: item.image,
+            }}
+          />
+        </TouchableOpacity>
+        {!item.status && <Text style={styles.itemEmpty}>Đã hết</Text>}
+      </View>
     );
   };
 
@@ -122,11 +145,23 @@ export default function Home() {
         <View style={styles.headerContent}>
           <Image
             style={styles.headerLogo}
-            source={require("../assets/logo.png")}
+            source={require("../assets/icon.png")}
           />
           <Text style={styles.headerSub}>Đối tác của QO Scanner</Text>
-          <Text style={styles.headerTitle}>{restaurant?.name}</Text>
-          <Text style={styles.headerAddress}>{restaurant?.address}</Text>
+          <Text
+            style={styles.headerTitle}
+            ellipsizeMode="tail"
+            numberOfLines={1}
+          >
+            {restaurant?.name}
+          </Text>
+          <Text
+            style={styles.headerAddress}
+            ellipsizeMode="tail"
+            numberOfLines={1}
+          >
+            {restaurant?.address}
+          </Text>
         </View>
         <View style={styles.headerQuantity}>
           <FontAwesome
@@ -194,7 +229,7 @@ export default function Home() {
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
           <Text style={styles.menuTitle} ellipsizeMode="tail" numberOfLines={1}>
-            SUNNY’S BBQ
+            {restaurant?.name}
           </Text>
           <View style={styles.menuRight}>
             <TouchableOpacity onPress={() => console.log("heart")}>
@@ -402,6 +437,18 @@ const styles = StyleSheet.create({
     width: 80,
     borderRadius: 8,
     marginLeft: 12,
+  },
+  itemEmpty: {
+    backgroundColor: myColor.greyBg,
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    opacity: 0.7,
+    textAlign: "right",
+    textAlignVertical: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingHorizontal: 30,
   },
   itemContent: {
     flex: 1,

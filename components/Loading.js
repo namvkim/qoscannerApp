@@ -7,8 +7,8 @@ export default function Loading() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <Image style={styles.logo} source={require("../assets/logo.png")} />
-      <Text style={styles.text}>Đang tải dữ liệu...</Text>
+      <Image style={styles.logo} source={require("../assets/icon.png")} />
+      <Text style={styles.text}>Vui lòng đợi một xíu...</Text>
     </SafeAreaView>
   );
 }
