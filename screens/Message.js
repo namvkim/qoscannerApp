@@ -52,10 +52,12 @@ export default function Message() {
   const sendMess = () => {
     if (mess) {
       setLoading(true);
+      const time = new Date();
       postOneMessage(resContext.data.idRestaurant, {
         content: mess,
         status: true,
         table: resContext.data.table,
+        createAt: time,
       }).then(() => {
         setMess("");
         setLoading(false);

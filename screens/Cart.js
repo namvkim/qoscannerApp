@@ -54,7 +54,7 @@ export default function Cart(props) {
   const sendOrder = () => {
     if (orderContext.data.length > 0) {
       setLoading(true);
-      const object = orderContext.data.map((el) => {
+      const arr = orderContext.data.map((el) => {
         return {
           id: el.id,
           name: el.name,
@@ -62,11 +62,13 @@ export default function Cart(props) {
           quantity: el.quantity,
         };
       });
+      const time = new Date();
       postOneOrder(resContext.data.idRestaurant, {
-        data: object,
+        data: arr,
         table: resContext.data.table,
         status: true,
         note: note ? note : "",
+        createAt: time,
       }).then(() => {
         orderContext.setData([]);
         setNote("");

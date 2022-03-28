@@ -35,6 +35,7 @@ export default function Home() {
   const navigation = useNavigation();
 
   const scrollY = useRef(new Animated.Value(0)).current;
+
   const opacityMenu = scrollY.interpolate({
     inputRange: [0, 70],
     outputRange: [0, 1],
@@ -66,20 +67,24 @@ export default function Home() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   const ac = new AbortController();
-  //   Promise.all([
-  //     getAllProduct(resContext.data.idRestaurant, setProducts),
-  //     getOneRestaurant(resContext.data.idRestaurant, setRestaurant),
-  //     getAllCategory(resContext.data.idRestaurant, setCategory),
-  //   ])
-  //     .then()
-  //     .catch((ex) => console.error(ex));
-  //   return () => ac.abort();
-  // }, []);
-
   const navigateDetails = (item) => {
     navigation.navigate("Details", { ...item, quantity: 1 });
+  };
+
+  const RenderMenuTab = ({ item }) => {
+    return (
+      <TouchableOpacity
+      // onPress={() =>
+      //   this.flatListRef.scrollToIndex({ animated: true, index: 3 })
+      // }
+      >
+        <Text style={styles.menuTabItemTxt}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const MenuTabDivider = () => {
+    return <View style={styles.menuTabDivider}></View>;
   };
 
   const RenderItem = ({ item }) => {
@@ -140,6 +145,15 @@ export default function Home() {
   };
 
   const RenderHeader = () => {
+    const address =
+      restaurant?.street +
+      " - " +
+      restaurant?.village +
+      " - " +
+      restaurant?.district +
+      " - " +
+      restaurant?.country;
+
     return (
       <View style={styles.headerBox}>
         <View style={styles.headerContent}>
@@ -153,14 +167,14 @@ export default function Home() {
             ellipsizeMode="tail"
             numberOfLines={1}
           >
-            {restaurant?.name}
+            {restaurant?.name ? restaurant?.name : "Menu"}
           </Text>
           <Text
             style={styles.headerAddress}
             ellipsizeMode="tail"
             numberOfLines={1}
           >
-            {restaurant?.address}
+            {restaurant?.country ? address : "Chúc quý khách ngon miệng"}
           </Text>
         </View>
         <View style={styles.headerQuantity}>
@@ -186,6 +200,7 @@ export default function Home() {
       </View>
     );
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
@@ -196,7 +211,11 @@ export default function Home() {
       >
         <Animated.Image
           style={[styles.image, { opacity: opacityImage }]}
-          source={{ uri: restaurant?.image }}
+          source={
+            restaurant?.image
+              ? { uri: restaurant?.image }
+              : require("../assets/banner.png")
+          }
         />
       </LinearGradient>
       <View style={[styles.menu, styles.menuPosition]}>
@@ -257,19 +276,17 @@ export default function Home() {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.menuTab}>
-          <TouchableOpacity onPress={() => console.log("block 1")}>
-            <Link to={{ screen: "#aa" }}>
-              <Text>block 1</Text>
-            </Link>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log("block 2")}>
-            <Text>block 2</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log("block 3")}>
-            <Text>block 3</Text>
-          </TouchableOpacity>
-        </View>
+        <FlatList
+          contentContainerStyle={styles.menuTab}
+          // ref={(ref) => {
+          //   this.flatListRef = ref;
+          // }}
+          data={category}
+          keyExtractor={(item) => item.id}
+          renderItem={RenderMenuTab}
+          ItemSeparatorComponent={MenuTabDivider}
+          horizontal
+        />
       </Animated.View>
       <Animated.FlatList
         style={styles.content}
@@ -308,11 +325,6 @@ const styles = StyleSheet.create({
 
     elevation: 15,
   },
-  menuTab: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-    flexDirection: "row",
-  },
   menu: {
     width: "100%",
     paddingHorizontal: 16,
@@ -327,6 +339,7 @@ const styles = StyleSheet.create({
   menuTitle: {
     marginLeft: 40,
     width: 180,
+    fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -336,6 +349,16 @@ const styles = StyleSheet.create({
   },
   menuSearch: {
     marginLeft: 16,
+  },
+  menuTab: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+  },
+  menuTabItemTxt: {
+    fontWeight: "bold",
+  },
+  menuTabDivider: {
+    width: 32,
   },
   imageLn: {
     width: "100%",
